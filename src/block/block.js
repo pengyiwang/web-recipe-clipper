@@ -11,7 +11,9 @@ import './editor.scss';
 
 const { __ } = wp.i18n; // Import __() from wp.i18n
 const { registerBlockType } = wp.blocks; // Import registerBlockType() from wp.blocks
-const { PlainText } = wp.editor
+const { PlainText } = wp.editor;
+const { URLInputButton } = wp.editor;
+const { URLInput } = wp.editor;
 
 /**
  * Register: aa Gutenberg Block.
@@ -37,10 +39,13 @@ registerBlockType( 'cgb/block-web-recipe-clipper', {
 		__( 'create-guten-block' ),
 	],
 	attributes: {
-        recipe_url: {
-            type: 'string'
-        }
-    },
+		url: {
+			type: 'string',
+		},
+		text: {
+			type: 'string',
+		},
+	},
 
 	/**
 	 * The edit function describes the structure of your block in the context of the editor.
@@ -50,17 +55,16 @@ registerBlockType( 'cgb/block-web-recipe-clipper', {
 	 *
 	 * @link https://wordpress.org/gutenberg/handbook/block-api/block-edit-save/
 	 */
-	edit: function( props ) {
-		// Creates a <p class='wp-block-cgb-block-web-recipe-clipper'></p>.
+	edit( { className, attributes, setAttributes } ) {
 		return (
-			<p>Please fill in a recipe web url:
-                <PlainText
-                    value={props.attributes.recipe_url}
-                    onChange={(recipe_url) => props.setAttributes({recipe_url})}
-                />
-            </p>
+			<URLInput
+				className={ className }
+				value={ attributes.url }
+				onChange={ ( url, post ) => setAttributes( { url, text: (post && post.title) || 'Click here' } ) }
+			/>
 		);
 	},
+
 
 	/**
 	 * The save function defines the way in which the different attributes should be combined
@@ -70,15 +74,7 @@ registerBlockType( 'cgb/block-web-recipe-clipper', {
 	 *
 	 * @link https://wordpress.org/gutenberg/handbook/block-api/block-edit-save/
 	 */
-	save: function( props ) {
-		return (
-			<div>
-				<p>— Hello from the frontend.</p>
-				<p>
-					The link is {props.attributes.recipe_url}
-				</p>
-				
-			</div>
-		);
-	},
+	save( { attributes } ) {
+		return <a href={ attributes.url }>{ attributes.text }</a>;
+	}
 } );
