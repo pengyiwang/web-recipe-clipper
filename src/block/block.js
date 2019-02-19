@@ -12,7 +12,7 @@ import axios from 'axios';
 
 const { __ } = wp.i18n; // Import __() from wp.i18n
 const { registerBlockType } = wp.blocks; // Import registerBlockType() from wp.blocks
-const { PlainText } = wp.editor;
+const { PlainText,RichText } = wp.editor;
 const { URLInputButton } = wp.editor;
 const { URLInput } = wp.editor;
 
@@ -43,7 +43,7 @@ registerBlockType( 'cgb/block-web-recipe-clipper', {
 		url: {
 			type: 'string',
 		},
-		recipe: {
+		title: {
 			type: 'string',
 		},
 	},
@@ -57,17 +57,29 @@ registerBlockType( 'cgb/block-web-recipe-clipper', {
 	 * @link https://wordpress.org/gutenberg/handbook/block-api/block-edit-save/
 	 */
 	edit( { className, attributes, setAttributes } ) {
-		
+		console.log(attributes);
 		const onChangeURL = value => {
 		      axios({
         method: 'get',
         url: `https://www.leancodes.com/recipe-api/RecipeParser-master/parse.php?link=${ value }`
     	}).then(response => {
             console.log(response.data);
-            setAttributes( { url: value, recipe: response.data.title} );
+            setAttributes( { url: value, title: response.data.title, description: response.data.description} );
     	});
   
-    };	
+    };	if(attributes.hasOwnProperty('title')){
+    	return (<div>
+    		<PlainText
+				value={ attributes.title }
+				onChange={ ( content ) => setAttributes( { title: content } ) }
+			/>
+			<RichText
+				value={ attributes.description }
+				onChange={ ( content ) => setAttributes( { description: content } ) }
+			/>	
+			</div>
+    		);
+    }else{
 		return (
 			<URLInput
 				className={ className }
@@ -75,6 +87,7 @@ registerBlockType( 'cgb/block-web-recipe-clipper', {
 				onChange={onChangeURL}
 			/>
 		);
+	}
 	},
 
 
@@ -86,10 +99,11 @@ registerBlockType( 'cgb/block-web-recipe-clipper', {
 	 *
 	 * @link https://wordpress.org/gutenberg/handbook/block-api/block-edit-save/
 	 */
-	save( { className, attributes } ) {
+	save( { attributes } ) {
 		return <div className="recipe-card">
 		<a href={ attributes.url }></a>
-		<p>{ attributes.recipe }</p>
+		<p>{attributes.title}</p>
+		<p>{attributes.description}</p>
 		</div>;
 	}
 } );
