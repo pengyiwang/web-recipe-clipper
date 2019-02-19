@@ -8,6 +8,7 @@
 //  Import CSS.
 import './style.scss';
 import './editor.scss';
+import axios from 'axios';
 
 const { __ } = wp.i18n; // Import __() from wp.i18n
 const { registerBlockType } = wp.blocks; // Import registerBlockType() from wp.blocks
@@ -42,7 +43,7 @@ registerBlockType( 'cgb/block-web-recipe-clipper', {
 		url: {
 			type: 'string',
 		},
-		text: {
+		recipe: {
 			type: 'string',
 		},
 	},
@@ -56,11 +57,22 @@ registerBlockType( 'cgb/block-web-recipe-clipper', {
 	 * @link https://wordpress.org/gutenberg/handbook/block-api/block-edit-save/
 	 */
 	edit( { className, attributes, setAttributes } ) {
+		
+		const onChangeURL = value => {
+		      axios({
+        method: 'get',
+        url: `https://www.leancodes.com/recipe-api/RecipeParser-master/parse.php?link=${ value }`
+    	}).then(response => {
+            console.log(response.data);
+            setAttributes( { url: value, recipe: response.data.title} );
+    	});
+  
+    };	
 		return (
 			<URLInput
 				className={ className }
 				value={ attributes.url }
-				onChange={ ( url, post ) => setAttributes( { url, text: (post && post.title) || 'Click here' } ) }
+				onChange={onChangeURL}
 			/>
 		);
 	},
@@ -74,7 +86,10 @@ registerBlockType( 'cgb/block-web-recipe-clipper', {
 	 *
 	 * @link https://wordpress.org/gutenberg/handbook/block-api/block-edit-save/
 	 */
-	save( { attributes } ) {
-		return <a href={ attributes.url }>{ attributes.text }</a>;
+	save( { className, attributes } ) {
+		return <div className="recipe-card">
+		<a href={ attributes.url }></a>
+		<p>{ attributes.recipe }</p>
+		</div>;
 	}
 } );

@@ -10,8 +10,7 @@
  * CSS for both Frontend+Backend.
  */
 .wp-block-cgb-block-web-recipe-clipper {
-  background: orangered;
-  border: 0.2rem solid #292929;
+  background: #f4f4f4;
   color: #292929;
   margin: 0 auto;
   max-width: 740px;
