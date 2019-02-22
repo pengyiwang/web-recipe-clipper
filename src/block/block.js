@@ -12,9 +12,8 @@ import axios from 'axios';
 
 const { __ } = wp.i18n; // Import __() from wp.i18n
 const { registerBlockType } = wp.blocks; // Import registerBlockType() from wp.blocks
-const { PlainText,RichText } = wp.editor;
-const { URLInputButton } = wp.editor;
-const { URLInput } = wp.editor;
+const { PlainText,RichText,MediaUpload,URLInputButton,URLInput } = wp.editor;
+const { Button } = wp.components;
 
 /**
  * Register: aa Gutenberg Block.
@@ -46,6 +45,21 @@ registerBlockType( 'cgb/block-web-recipe-clipper', {
 		title: {
 			type: 'string',
 		},
+		description: {
+			type: 'string',
+		},
+		image: {
+			type: 'string',
+		},
+		mediaID: {
+			type: 'number',
+		},
+		mediaURL: {
+			type: 'string',
+			source: 'attribute',
+			selector: 'img',
+			attribute: 'src',
+		},
 	},
 
 	/**
@@ -56,25 +70,59 @@ registerBlockType( 'cgb/block-web-recipe-clipper', {
 	 *
 	 * @link https://wordpress.org/gutenberg/handbook/block-api/block-edit-save/
 	 */
-	edit( { className, attributes, setAttributes } ) {
-		console.log(attributes);
-		const onChangeURL = value => {
+	edit: ( props ) => {
+		const {
+			className,
+			attributes: {
+				url,
+				title,
+				description,
+				mediaID,
+				mediaURL,
+				image,
+				instructions,
+			},
+			setAttributes,
+		} = props;
+		console.log(title);
+		const onChangeURL = ( value ) => {
+			console.log(value);
 		      axios({
         method: 'get',
         url: `https://www.leancodes.com/recipe-api/RecipeParser-master/parse.php?link=${ value }`
     	}).then(response => {
             console.log(response.data);
-            setAttributes( { url: value, title: response.data.title, description: response.data.description} );
+            setAttributes( { url: value, title: response.data.title, description: response.data.description, image: response.data.photo_url} );
     	});
   
-    };	if(attributes.hasOwnProperty('title')){
+    	};
+    	const onSelectImage = ( media ) => {
+			setAttributes( {
+				mediaURL: media.url,
+				mediaID: media.id,
+			} );
+		};	
+    if(title != null){
+    	console.log("loading...");
     	return (<div>
     		<PlainText
-				value={ attributes.title }
+				value={ title }
 				onChange={ ( content ) => setAttributes( { title: content } ) }
 			/>
+			<div className="recipe-image">
+					<MediaUpload
+						onSelect={ onSelectImage }
+						allowedTypes="image"
+						value={ mediaID }
+						render={ ( { open } ) => (
+							<Button className={ mediaID ? 'image-button' : 'button button-large' } onClick={ open }>
+								{ ! mediaID ? __( 'Upload Image', 'gutenberg-examples' ) : <img src={ mediaURL } alt={ __( 'Upload Recipe Image', 'gutenberg-examples' ) } /> }
+							</Button>
+						) }
+					/>
+				</div>
 			<RichText
-				value={ attributes.description }
+				value={ description }
 				onChange={ ( content ) => setAttributes( { description: content } ) }
 			/>	
 			</div>
@@ -83,7 +131,7 @@ registerBlockType( 'cgb/block-web-recipe-clipper', {
 		return (
 			<URLInput
 				className={ className }
-				value={ attributes.url }
+				value={ url }
 				onChange={onChangeURL}
 			/>
 		);
