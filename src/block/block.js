@@ -50,7 +50,17 @@ registerBlockType( 'cgb/block-web-recipe-clipper', {
 		},
 		image: {
 			type: 'string',
-		}
+		},
+		ingredients: {
+			type: 'array',
+			source: 'children',
+			selector: '.ingredients',
+		},
+		instructions: {
+			type: 'array',
+			source: 'children',
+			selector: '.steps',
+		},
 	},
 
 	/**
@@ -68,14 +78,13 @@ registerBlockType( 'cgb/block-web-recipe-clipper', {
 				url,
 				title,
 				description,
-				mediaID,
-				mediaURL,
 				image,
+				ingredients,
 				instructions,
 			},
 			setAttributes,
 		} = props;
-		console.log(title);
+		console.log(ingredients);
 		const onChangeURL = ( value ) => {
 			console.log(value);
 		      axios({
@@ -83,7 +92,9 @@ registerBlockType( 'cgb/block-web-recipe-clipper', {
         url: `https://www.leancodes.com/recipe-api/RecipeParser-master/parse.php?link=${ value }`
     	}).then(response => {
             console.log(response.data);
-            setAttributes( { url: value, title: response.data.title, description: response.data.description, image: response.data.photo_url} );
+            setAttributes( { url: value, title: response.data.title, description: response.data.description, image: response.data.photo_url, ingredients: response.data.ingredients[0].list.map(function(ingredient){
+			 return '<li>'+ingredient+'</li>';
+		}).join('')} );
     	});
   
     	};
@@ -91,11 +102,18 @@ registerBlockType( 'cgb/block-web-recipe-clipper', {
 			setAttributes( {
 				image: media.url
 			} );
+		};
+		const onChangeIngredients = ( value ) => {
+			setAttributes( { ingredients: value } );
+		};
+		const onChangeInstructions = ( value ) => {
+			setAttributes( { instructions: value } );
 		};	
     if(title != null){
     	console.log("loading...");
     	return (<div>
-    		<PlainText
+    		<RichText
+    			tagName="h2"
 				value={ title }
 				onChange={ ( content ) => setAttributes( { title: content } ) }
 			/>
@@ -114,8 +132,26 @@ registerBlockType( 'cgb/block-web-recipe-clipper', {
 			<RichText
 				value={ description }
 				onChange={ ( content ) => setAttributes( { description: content } ) }
-			/>	
+			/>
+			<h3>Ingredients</h3>
+			<RichText
+					tagName="ul"
+					multiline="li"
+					value={ ingredients }
+					onChange={ onChangeIngredients }
+					className="ingredients"
+				/>	
+				<h3>Instructions</h3>
+				<RichText
+					tagName="div"
+					multiline="p"
+					className="steps"
+					placeholder="Write the instructions…"
+					value={ instructions }
+					onChange={ onChangeInstructions }
+				/>
 			</div>
+
     		);
     }else{
 		return (
