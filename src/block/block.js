@@ -94,6 +94,8 @@ registerBlockType( 'cgb/block-web-recipe-clipper', {
             console.log(response.data);
             setAttributes( { url: value, title: response.data.title, description: response.data.description, image: response.data.photo_url, ingredients: response.data.ingredients[0].list.map(function(ingredient){
 			 return '<li>'+ingredient+'</li>';
+		}).join(''), instructions: response.data.instructions[0].list.map(function(instruction){
+			 return '<p>'+instruction+'</p>';
 		}).join('')} );
     	});
   
