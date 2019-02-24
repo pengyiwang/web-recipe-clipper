@@ -50,16 +50,7 @@ registerBlockType( 'cgb/block-web-recipe-clipper', {
 		},
 		image: {
 			type: 'string',
-		},
-		mediaID: {
-			type: 'number',
-		},
-		mediaURL: {
-			type: 'string',
-			source: 'attribute',
-			selector: 'img',
-			attribute: 'src',
-		},
+		}
 	},
 
 	/**
@@ -98,8 +89,7 @@ registerBlockType( 'cgb/block-web-recipe-clipper', {
     	};
     	const onSelectImage = ( media ) => {
 			setAttributes( {
-				mediaURL: media.url,
-				mediaID: media.id,
+				image: media.url
 			} );
 		};	
     if(title != null){
@@ -113,10 +103,10 @@ registerBlockType( 'cgb/block-web-recipe-clipper', {
 					<MediaUpload
 						onSelect={ onSelectImage }
 						allowedTypes="image"
-						value={ mediaID }
+						value={ image }
 						render={ ( { open } ) => (
-							<Button className={ mediaID ? 'image-button' : 'button button-large' } onClick={ open }>
-								{ ! mediaID ? __( 'Upload Image', 'gutenberg-examples' ) : <img src={ mediaURL } alt={ __( 'Upload Recipe Image', 'gutenberg-examples' ) } /> }
+							<Button className={ image ? 'image-button' : 'button button-large' } onClick={ open }>
+								{ ! image ? __( 'Upload Image', 'gutenberg-examples' ) : <img src={ image } alt={ __( 'Upload Recipe Image', 'gutenberg-examples' ) } /> }
 							</Button>
 						) }
 					/>
