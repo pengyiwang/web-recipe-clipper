@@ -13,7 +13,7 @@ import axios from 'axios';
 const { __ } = wp.i18n; // Import __() from wp.i18n
 const { registerBlockType } = wp.blocks; // Import registerBlockType() from wp.blocks
 const { PlainText,RichText,MediaUpload,URLInputButton,URLInput } = wp.editor;
-const { Button } = wp.components;
+const { Button,Spinner } = wp.components;
 
 /**
  * Register: aa Gutenberg Block.
@@ -30,13 +30,12 @@ const { Button } = wp.components;
  */
 registerBlockType( 'cgb/block-web-recipe-clipper', {
 	// Block name. Block names must be string that contains a namespace prefix. Example: my-plugin/my-custom-block.
-	title: __( 'web-recipe-clipper - CGB Block' ), // Block title.
-	icon: 'shield', // Block icon from Dashicons → https://developer.wordpress.org/resource/dashicons/.
+	title: __( 'Web Recipe Clipper' ), // Block title.
+	icon: 'carrot', // Block icon from Dashicons → https://developer.wordpress.org/resource/dashicons/.
 	category: 'common', // Block category — Group blocks together based on common traits E.g. common, formatting, layout widgets, embed.
 	keywords: [
-		__( 'web-recipe-clipper — CGB Block' ),
-		__( 'CGB Example' ),
-		__( 'create-guten-block' ),
+		__( 'web recipe clipper' ),
+		__( 'wordpress recipe builder' ),
 	],
 	attributes: {
 		url: {
@@ -61,6 +60,9 @@ registerBlockType( 'cgb/block-web-recipe-clipper', {
 			source: 'children',
 			selector: '.steps',
 		},
+		fetching: {
+			type: 'string',
+		},
 	},
 
 	/**
@@ -81,12 +83,14 @@ registerBlockType( 'cgb/block-web-recipe-clipper', {
 				image,
 				ingredients,
 				instructions,
+				fetching,
 			},
 			setAttributes,
 		} = props;
 		console.log(ingredients);
 		const onChangeURL = ( value ) => {
 			console.log(value);
+			setAttributes({fetching: true});
 		      axios({
         method: 'get',
         url: `https://www.leancodes.com/recipe-api/RecipeParser-master/parse.php?link=${ value }`
@@ -96,7 +100,7 @@ registerBlockType( 'cgb/block-web-recipe-clipper', {
 			 return '<li>'+ingredient+'</li>';
 		}).join(''), instructions: response.data.instructions[0].list.map(function(instruction){
 			 return '<p>'+instruction+'</p>';
-		}).join('')} );
+		}).join(''), fetching: false} );
     	});
   
     	};
@@ -111,7 +115,7 @@ registerBlockType( 'cgb/block-web-recipe-clipper', {
 		const onChangeInstructions = ( value ) => {
 			setAttributes( { instructions: value } );
 		};	
-    if(title != null){
+    if(title != null && !fetching){
     	console.log("loading...");
     	return (<div>
     		<RichText
@@ -156,6 +160,12 @@ registerBlockType( 'cgb/block-web-recipe-clipper', {
 
     		);
     }else{
+    	if(fetching){
+    		return <div className="web-recipe-clipper is-loading">
+					<Spinner />
+				   <p>{ __( 'Loading…' ) }</p>
+	</div>
+    	}else{
 		return (
 			<URLInput
 				className={ className }
@@ -163,6 +173,7 @@ registerBlockType( 'cgb/block-web-recipe-clipper', {
 				onChange={onChangeURL}
 			/>
 		);
+		}
 	}
 	},
 
