@@ -43,22 +43,26 @@ registerBlockType( 'cgb/block-web-recipe-clipper', {
 		},
 		title: {
 			type: 'string',
+			selector: 'h2',
 		},
 		description: {
 			type: 'string',
+			selector:'p',
 		},
 		image: {
 			type: 'string',
 		},
 		ingredients: {
-			type: 'array',
-			source: 'children',
-			selector: '.ingredients',
+			type: 'string',
+			source: 'html',
+			multiline: 'li',
+			selector: 'ul',
 		},
 		instructions: {
-			type: 'array',
-			source: 'children',
-			selector: '.steps',
+			type: 'string',
+			source: 'html',
+			multiline: 'p',
+			selector: '.wrc-instructions',
 		},
 		fetching: {
 			type: 'string',
@@ -117,13 +121,14 @@ registerBlockType( 'cgb/block-web-recipe-clipper', {
 		};	
     if(title != null && !fetching){
     	console.log("loading...");
-    	return (<div>
+    	return (<div className="wrc-edit">
     		<RichText
     			tagName="h2"
 				value={ title }
+				placeholder="Recipe title…"
 				onChange={ ( content ) => setAttributes( { title: content } ) }
 			/>
-			<div className="recipe-image">
+			<div className="wrc-recipe-image-edit">
 					<MediaUpload
 						onSelect={ onSelectImage }
 						allowedTypes="image"
@@ -145,13 +150,13 @@ registerBlockType( 'cgb/block-web-recipe-clipper', {
 					multiline="li"
 					value={ ingredients }
 					onChange={ onChangeIngredients }
-					className="ingredients"
+					className="wrc-ingredients-edit"
 				/>	
 				<h3>Instructions</h3>
 				<RichText
 					tagName="div"
 					multiline="p"
-					className="steps"
+					className="wrc-instructions-edit"
 					placeholder="Write the instructions…"
 					value={ instructions }
 					onChange={ onChangeInstructions }
@@ -186,11 +191,32 @@ registerBlockType( 'cgb/block-web-recipe-clipper', {
 	 *
 	 * @link https://wordpress.org/gutenberg/handbook/block-api/block-edit-save/
 	 */
-	save( { attributes } ) {
-		return <div className="recipe-card">
-		<a href={ attributes.url }></a>
-		<p>{attributes.title}</p>
-		<p>{attributes.description}</p>
+	save: ( props ) => {
+		const {
+			className,
+			attributes: {
+				url,
+				title,
+				description,
+				image,
+				ingredients,
+				instructions,
+				fetching,
+			},
+			setAttributes,
+		} = props;
+		return <div className="wrc">
+		<h2>{title}</h2>
+		<div className="recipe-image">
+		<img src={image}></img>
+		</div>
+		<p>{description}</p>
+		<h3>Ingredients</h3>
+		<div className="wrc-ingredients">
+		<ul dangerouslySetInnerHTML={{__html: ingredients}} />
+		</div>
+		<h3>Instructions</h3>
+		<div className="wrc-instructions" dangerouslySetInnerHTML={{__html: instructions}} />
 		</div>;
 	}
 } );
