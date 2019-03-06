@@ -91,15 +91,15 @@ registerBlockType( 'cgb/block-web-recipe-clipper', {
 			},
 			setAttributes,
 		} = props;
-		console.log(ingredients);
+	
 		const onChangeURL = ( value ) => {
-			console.log(value);
+			
 			setAttributes({fetching: true});
 		      axios({
         method: 'get',
         url: `https://www.leancodes.com/recipe-api/RecipeParser-master/parse.php?link=${ value }`
     	}).then(response => {
-            console.log(response.data);
+           
             setAttributes( { url: value, title: response.data.title, description: response.data.description, image: response.data.photo_url, ingredients: response.data.ingredients[0].list.map(function(ingredient){
 			 return '<li>'+ingredient+'</li>';
 		}).join(''), instructions: response.data.instructions[0].list.map(function(instruction){
@@ -120,7 +120,7 @@ registerBlockType( 'cgb/block-web-recipe-clipper', {
 			setAttributes( { instructions: value } );
 		};	
     if(title != null && !fetching){
-    	console.log("loading...");
+    
     	return (<div className="wrc-edit">
     		<RichText
     			tagName="h2"
@@ -176,6 +176,7 @@ registerBlockType( 'cgb/block-web-recipe-clipper', {
 				className={ className }
 				value={ url }
 				onChange={onChangeURL}
+				placeholder="Paste a web recipe URL"
 			/>
 		);
 		}
