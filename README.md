@@ -20,8 +20,15 @@ When you save your post, it will show a well-formatted recipe on your post.
 2.Activate the plugin through the ‘Plugins’ screen in WordPress.
 3.Search Web Recipe Clipper in your editor when you want to clip a recipe
 
+== Frequently Asked Questions ==
+
+
 == Screenshots ==
 1. Find web recipe clipper block in your editor
 2. Paste a web recipe link
 3. It will generate recipe in your editor
 
+== Changelog ==
+
+
+== Upgrade Notice ==
