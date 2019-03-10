@@ -1,4 +1,27 @@
-Sometimes we want to save a recipe that we find on the web in our own blog post, you can use this plugin to add a block to gutenberg editor, then you can fill in the web recipe url. 
-It will generate a recipe in your editor based on the web recipe title, photo, description, ingredients and instructions, you can edit it, change it to your own version then publish it.
-This web recipe clipper wordpress plugin was built by [LeanCodes](https://www.leancodes.com).
+=== Web Recipe Clipper ===
+Contributors: rocwing
+Tags: recipe, gutenberg block, recipe generator
+Donate link: https://paypal.me/PengyiWang
+Requires at least: 5.0.0
+Tested up to: 5.1
+Requires PHP: 5.2.4
+Stable tag: 1.0
+License: GPLv2 or later
+License URI: http://www.gnu.org/licenses/gpl-2.0.html
+
+The plugin will add a block to gutenberg editor, you can paste a web recipe link, it will clip the content to generate the recipe in the editor.
+
+== Description ==
+The plugin will clip the recipe title, photo, description, instructions to your gutenberg editor, you can upload your own photos, edit the content, you can also add other contents.
+When you save your post, it will show a well-formatted recipe on your post.
+
+== Installation ==
+1.Install the plugin through the WordPress plugins screen.
+2.Activate the plugin through the ‘Plugins’ screen in WordPress.
+3.Search Web Recipe Clipper in your editor when you want to clip a recipe
+
+== Screenshots ==
+1. Find web recipe clipper block in your editor
+2. Paste a web recipe link
+3. It will generate recipe in your editor
 
